@@ -3,7 +3,13 @@ name: Image Translator - Test and Deploy
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'pelican-coast.html'
+      - '.github/workflows/pelican-pages.yml'
   pull_request:
+    paths-ignore:
+      - 'pelican-coast.html'
+      - '.github/workflows/pelican-pages.yml'
   workflow_dispatch:
 
 permissions:
@@ -96,7 +102,7 @@ jobs:
       - name: Acceptance summary
         if: success()
         run: |
-          echo '## Image Translator verified' >> "$GITHUB_STEP_SUMMARY"
+          echo '## Image Translator verified' >> "$GITHUB_STEP_SUMMARYMARY"
           echo 'Syntax + unit tests + desktop/mobile browser tests + real OCR/translation + public deployment checks passed.' >> "$GITHUB_STEP_SUMMARY"
           echo 'Commit: `${{ github.sha }}`' >> "$GITHUB_STEP_SUMMARY"
           echo 'Acceptance: ${{ steps.deployment.outputs.page_url }}image-translator/' >> "$GITHUB_STEP_SUMMARY"
