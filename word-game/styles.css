@@ -8,3 +8,15 @@
 .type-row .primary{min-height:52px;border-radius:16px;background:linear-gradient(135deg,#2f8a5d,#23704b);box-shadow:0 6px 16px #23704b2b;transition:transform .15s,box-shadow .15s}
 .type-row .primary:active{transform:translateY(1px);box-shadow:0 3px 10px #23704b25}
 @media(max-width:480px){.type-answer{margin-top:22px}.type-row{grid-template-columns:minmax(0,1fr) 92px!important}.type-row .primary{width:auto!important;padding:0 12px}.type-row .input-shell input{font-size:18px;padding-left:42px}.input-icon{left:14px}}
+
+/* Refined minimal spelling field */
+.type-answer{margin-top:30px;max-width:460px}
+.type-answer>label{margin-bottom:16px;color:#738078;font-size:15px;font-weight:500}
+.type-row{display:flex!important;flex-direction:column;gap:18px!important;align-items:stretch}
+.input-shell{background:transparent!important;border:0!important;border-bottom:2px solid #cbd8cf!important;border-radius:0!important;box-shadow:none!important;min-height:58px;transition:border-color .2s,box-shadow .2s}
+.input-shell:focus-within{background:transparent!important;border-color:#2f8a5d!important;box-shadow:0 3px 0 -1px #2f8a5d18!important}
+.input-icon{display:none}
+.type-row .input-shell input{height:58px!important;padding:0 14px!important;text-align:center!important;font-size:23px!important;font-weight:600!important;letter-spacing:.6px}
+.type-row .input-shell input::placeholder{text-align:center;color:#a8b3ac;font-size:17px;font-weight:400}
+.type-row .primary{width:100%!important;min-height:54px;border-radius:15px;margin-top:2px;font-size:17px}
+@media(max-width:480px){.type-answer{margin-top:26px}.type-row{display:flex!important;gap:18px!important}.type-row .primary{width:100%!important}.type-row .input-shell input{padding:0 10px!important;text-align:center!important;font-size:22px!important}}
