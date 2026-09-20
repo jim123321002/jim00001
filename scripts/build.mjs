@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 const output = '_site/image-translator';
 await rm('_site', { recursive: true, force: true }); await mkdir(output, { recursive: true });
 await cp('index.html', '_site/index.html');
+await cp('pelican-coast.html', '_site/pelican-coast.html');
 await cp('image-translator', output, { recursive: true });
 await writeFile('_site/.nojekyll', '');
 await mkdir(`${output}/vendor/core`, { recursive: true }); await mkdir(`${output}/vendor/lang`, { recursive: true });
@@ -29,5 +30,5 @@ await writeFile(`${output}/vendor/lang/LICENSE`, await get('https://raw.githubus
 await writeFile(`${output}/vendor/models.json`, JSON.stringify(models, null, 2));
 const pkg = JSON.parse(await readFile('package.json', 'utf8'));
 await writeFile(`${output}/version.json`, JSON.stringify({ version: pkg.version, commit: process.env.GITHUB_SHA || 'local-development', builtAt: new Date().toISOString() }, null, 2));
-console.log('Built _site: original Snake game + /image-translator/ with same-origin OCR runtime and models.');
+console.log('Built _site: original Snake game + pelican-coast.html + /image-translator/ with same-origin OCR runtime and models.');
 console.log(JSON.stringify(models, null, 2));
