@@ -1,0 +1,54 @@
+name: Pelican Animation - Publish Only
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'pelican-coast.html'
+      - '.github/workflows/pelican-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Share the existing site's deployment lock, so publishing never overlaps.
+concurrency:
+  group: image-translator-pages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}pelican-coast.html
+    steps:
+      - name: Checkout website sources
+        uses: actions/checkout@v4
+      - name: Set up build runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned build dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Package animation and preserve all existing website pages
+        run: npm run build
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload complete website
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Publish website
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Record animation link
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          echo '## Pelican animation published' >> "$GITHUB_STEP_SUMMARY"
+          echo "Open: ${PAGE_URL}pelican-coast.html" >> "$GITHUB_STEP_SUMMARY"
+          echo 'The existing home page and image translator are included unchanged. No tests were run by this workflow.' >> "$GITHUB_STEP_SUMMARY"
