@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 云开发验收测试</title>
+<style>
+body{font-family:system-ui,-apple-system,sans-serif;background:#f5f7fb;margin:0;padding:24px;color:#172033}
+.card{max-width:520px;margin:60px auto;background:#fff;padding:28px;border-radius:18px;box-shadow:0 10px 35px #0001}
+h1{margin-top:0} input{width:100%;box-sizing:border-box;padding:14px;font-size:18px;border:1px solid #ccd3df;border-radius:10px;margin:8px 0}
+button{width:100%;padding:14px;margin-top:10px;border:0;border-radius:10px;font-size:17px;cursor:pointer;background:#172033;color:white}
+#result{font-size:28px;font-weight:700;text-align:center;margin:20px 0;min-height:36px}.ok{font-size:14px;color:#287a45;text-align:center}
+</style>
+</head>
+<body><main class="card">
+<h1>AI 云开发验收测试</h1>
+<p>这是一个简单的加法计算器，用来验证 GitHub → Actions → Pages → 用户验收的完整流程。</p>
+<input id="a" type="number" value="12" aria-label="第一个数字">
+<input id="b" type="number" value="30" aria-label="第二个数字">
+<button id="calc">计算 A + B</button>
+<div id="result">42</div>
+<div class="ok">✓ 页面已成功加载</div>
+</main>
+<script>
+function add(a,b){return Number(a)+Number(b)}
+function calculate(){const a=document.getElementById('a').value,b=document.getElementById('b').value;document.getElementById('result').textContent=add(a,b)}
+document.getElementById('calc').addEventListener('click',calculate);
+window.add=add;
+</script></body></html>
