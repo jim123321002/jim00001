@@ -61,7 +61,10 @@ export function renderImage(item) {
     if (r.textured && r.repair === 'auto') diagnostics.push({ id: r.id, message: '复杂背景使用边缘补色，请检查修复效果。', fatal: false });
     plans.push({ r, layout });
   }
-  for (let i = 0; i < regions.length; i++) for (let j = i + 1; j < regions.length; j++) if (intersects(regions[i].box, regions[j].box, 1)) diagnostics.push({ id: regions[i].id, message: `与区域 ${regions[j].id} 的文字框重叠，请调整位置。`, fatal: true });
+  for (let i = 0; i < regions.length; i++) for (let j = i + 1; j < regions.length; j++) if (intersects(regions[i].box, regions[j].box, 1)) {
+    diagnostics.push({ id: regions[i].id, message: `与区域 ${regions[j].id} 的文字框重叠，请调整位置。`, fatal: true });
+    diagnostics.push({ id: regions[j].id, message: `与区域 ${regions[i].id} 的文字框重叠，请调整位置。`, fatal: true });
+  }
   for (const { r } of plans) erase(ctx, item.original, r);
   for (const { r, layout } of plans) {
     const box = r.box, rtl = item.language === 'ar';
