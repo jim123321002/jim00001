@@ -1,4 +1,4 @@
-import { clampRect, fitText, intersects } from './core.mjs';
+import { clamp, clampRect, fitText, intersects } from './core.mjs';
 export const FONT = 'Arial, "Noto Sans", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif';
 const median = values => values.sort((a, b) => a - b)[Math.floor(values.length / 2)] || 0;
 const color = a => '#' + a.slice(0, 3).map(n => Math.round(n).toString(16).padStart(2, '0')).join('');
@@ -61,7 +61,9 @@ export function renderImage(item) {
     if (r.textured && r.repair === 'auto') diagnostics.push({ id: r.id, message: '复杂背景使用边缘补色，请检查修复效果。', fatal: false });
     plans.push({ r, layout });
   }
-  for (let i = 0; i < regions.length; i++) for (let j = i + 1; j < regions.length; j++) if (intersects(regions[i].box, regions[j].box, 1)) {
+  for (let i = 0; i < regions.length; i++) for (let j = i + 1; j < regions.length; j++) {
+    if (!intersects(regions[i].box, regions[j].box, 1)) continue;
+    // Report on both regions so the currently selected box always explains the export block.
     diagnostics.push({ id: regions[i].id, message: `与区域 ${regions[j].id} 的文字框重叠，请调整位置。`, fatal: true });
     diagnostics.push({ id: regions[j].id, message: `与区域 ${regions[i].id} 的文字框重叠，请调整位置。`, fatal: true });
   }
@@ -74,9 +76,14 @@ export function renderImage(item) {
     ctx.beginPath(); ctx.rect(box.x, box.y, box.w, box.h); ctx.clip();
     ctx.font = `${r.weight || '500'} ${layout.size}px ${FONT}`;
     ctx.fillStyle = r.fg; ctx.textBaseline = 'alphabetic'; ctx.textAlign = align; ctx.direction = rtl ? 'rtl' : 'ltr';
-    const x = align === 'center' ? box.x + box.w / 2 : align === 'right' ? box.x + box.w - layout.padding : box.x + layout.padding;
+    const anchor = align === 'center' ? box.x + box.w / 2 : align === 'right' ? box.x + box.w - layout.padding : box.x + layout.padding;
     const firstBaseline = box.y + (box.h - layout.totalHeight) / 2 + layout.ascent;
-    layout.lines.forEach((line, i) => ctx.fillText(line, x, firstBaseline + i * layout.lineHeight));
+    layout.lines.forEach((line, i) => {
+      const ink = ctx.measureText(line);
+      // Include glyph overhangs, not just advance width, for RTL and accented text.
+      const x = clamp(anchor, box.x + layout.padding + (ink.actualBoundingBoxLeft || 0), box.x + box.w - layout.padding - (ink.actualBoundingBoxRight || 0));
+      ctx.fillText(line, x, firstBaseline + i * layout.lineHeight);
+    });
     ctx.restore();
   }
   return { canvas, diagnostics };

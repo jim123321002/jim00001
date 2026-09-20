@@ -27,3 +27,33 @@ test('LIVE real Arabic translation is not a mocked result', async ({ page }) => 
   expect(result).toMatch(/[\u0600-\u06ff]/);
   console.log('LIVE_ARABIC_VERIFIED', result);
 });
+
+test('LIVE multi-region product poster retains graphics and exports complete translations', async ({ page }, info) => {
+  await page.goto('./'); await page.locator('#sample').click();
+  await expect(page.locator('#queue-count')).toHaveText('1'); await run(page);
+  const item = (await diagnostics(page))[0];
+  expect(item.regions.length, JSON.stringify(item)).toBeGreaterThanOrEqual(5);
+  expect(item.exportable, JSON.stringify(item)).toBe(true);
+  expect(item.regions.every(r => r.translation.trim() && r.size >= 8)).toBe(true);
+  expect(item.width).toBe(1200); expect(item.height).toBe(800);
+  await info.attach('live-product-poster', { body: await page.locator('#result-wrap canvas').screenshot(), contentType: 'image/png' });
+  await info.attach('live-product-diagnostics', { body: Buffer.from(JSON.stringify(item, null, 2)), contentType: 'application/json' });
+  console.log('LIVE_PRODUCT_POSTER_VERIFIED', JSON.stringify(item.regions.map(r => ({ source: r.source, translation: r.translation, size: r.size }))));
+});
+
+test('LIVE all 14 advertised target languages return actual translations', async ({ page }, info) => {
+  test.setTimeout(240000);
+  await page.goto('./');
+  const results = await page.evaluate(async () => {
+    const { LANGUAGES } = await import('./core.mjs');
+    const { translateText } = await import('./translate.mjs');
+    const results = [];
+    for (const [language] of LANGUAGES) results.push({ language, text: await translateText('安全第一', language, { provider: 'mymemory' }) });
+    return results;
+  });
+  expect(results).toHaveLength(14);
+  for (const result of results) expect(result.text.trim().length).toBeGreaterThan(0);
+  expect(results.find(r => r.language === 'ar').text).toMatch(/[\u0600-\u06ff]/);
+  await info.attach('live-target-languages', { body: Buffer.from(JSON.stringify(results, null, 2)), contentType: 'application/json' });
+  console.log('LIVE_14_LANGUAGES_VERIFIED', JSON.stringify(results));
+});
