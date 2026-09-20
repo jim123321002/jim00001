@@ -2,6 +2,9 @@ name: Test Snake Web Game
 
 on:
   push:
+    paths-ignore:
+      - 'pelican-coast.html'
+      - '.github/workflows/pelican-pages.yml'
   workflow_dispatch:
 
 jobs:
