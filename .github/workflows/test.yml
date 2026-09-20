@@ -1,4 +1,4 @@
-name: Test
+name: Test and Publish Web Artifact
 
 on:
   push:
@@ -12,7 +12,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Run tests
+      - name: Run Python tests
         run: python -m unittest -v
-      - name: Run program
-        run: python hello.py
+      - name: Validate webpage
+        run: |
+          grep -q "AI 云开发验收测试" index.html
+          grep -q "function add" index.html
+      - name: Upload website artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: website
+          path: index.html
