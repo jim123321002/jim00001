@@ -1,4 +1,4 @@
-name: Test and Publish Web Artifact
+name: Test Snake Web Game
 
 on:
   push:
@@ -9,17 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Run Python tests
-        run: python -m unittest -v
-      - name: Validate webpage
+      - name: Validate game files
         run: |
-          grep -q "AI 云开发验收测试" index.html
-          grep -q "function add" index.html
+          test -s index.html
+          grep -q "霓虹贪吃蛇" index.html
+          grep -q "function step" index.html
+          grep -q "touchstart" index.html
+          grep -q "localStorage" index.html
       - name: Upload website artifact
         uses: actions/upload-artifact@v4
         with:
-          name: website
+          name: snake-game
           path: index.html
