@@ -1,6 +1,16 @@
 import { LANGUAGES, normalizeText, splitUtf8, validateEndpoint } from './core.mjs';
 const cache = new Map();
 export function clearTranslationCache() { cache.clear(); }
+// MyMemory sometimes returns HTML-escaped text (including &#10;). Decode as text,
+// without innerHTML, DOM parsing, tag stripping or executing provider content.
+export function decodeTranslationEntities(value) {
+  const named = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ', ndash: '–', mdash: '—', hellip: '…', lsquo: '‘', rsquo: '’', ldquo: '“', rdquo: '”', bull: '•', copy: '©', reg: '®', trade: '™', AMP: '&', LT: '<', GT: '>', QUOT: '"' };
+  return String(value).replace(/&#(?:x([0-9a-f]+)|([0-9]+));|&([a-z]+);/gi, (match, hex, decimal, name) => {
+    if (name) return Object.hasOwn(named, name) ? named[name] : match;
+    const code = Number.parseInt(hex || decimal, hex ? 16 : 10);
+    return code > 0 && code <= 0x10ffff && !(code >= 0xd800 && code <= 0xdfff) ? String.fromCodePoint(code) : match;
+  });
+}
 export async function requestJSON(url, options = {}, signal, fetcher = fetch) {
   let last;
   for (let attempt = 0; attempt < 2; attempt++) {
@@ -51,11 +61,12 @@ export async function translateText(text, target, settings = {}, signal, fetcher
       if (Number(data.responseStatus) !== 200 || data.quotaFinished) throw new Error('MyMemory 暂时不可用或当日额度已用完。可重试失败区域，或切换自定义接口 / 手动模式。');
       const result = data.responseData?.translatedText;
       if (typeof result !== 'string' || !result.trim() || /MYMEMORY WARNING|QUERY LENGTH LIMIT|INVALID LANGUAGE PAIR/i.test(result)) throw new Error('翻译服务未返回有效译文。请检查目标语言或稍后重试。');
-      parts.push(result);
+      parts.push(decodeTranslationEntities(result));
     }
     translation = parts.join(target === 'ja' || target === 'ko' || target === 'th' ? '' : ' ');
   }
   translation = translation.trim();
+  if (!translation) throw new Error('翻译服务未返回有效译文，请重试或手动校正。');
   if (translation === source && /\p{Script=Han}/u.test(source) && !['ja', 'ko'].includes(target)) throw new Error('接口返回了未翻译的中文，请重试或手动校正。');
   // Session-only cache: no source text, images or credentials are persisted.
   if (cache.size > 1500) cache.clear();

@@ -10,6 +10,7 @@ test('LIVE real Chinese image → local OCR → real MyMemory → fitted PNG', a
   const data = (await diagnostics(page))[0];
   expect(data.exportable, JSON.stringify(data)).toBe(true); expect(data.regions.length).toBeGreaterThan(0);
   expect(data.regions[0].source).toContain('安全'); expect(data.regions[0].translation).toMatch(/safety|safe|security/i);
+  expect(data.regions[0].translation).not.toMatch(/&#(?:x[\da-f]+|\d+);/i);
   expect(translationRequests.length).toBeGreaterThan(0); expect(errors).toEqual([]);
   const version = await page.evaluate(async () => (await fetch('./version.json', { cache: 'no-store' })).json());
   if (process.env.GITHUB_SHA) expect(version.commit).toBe(process.env.GITHUB_SHA);
@@ -36,7 +37,14 @@ test('LIVE multi-region product poster retains graphics and exports complete tra
   expect(item.exportable, JSON.stringify(item)).toBe(true);
   expect(item.regions.every(r => r.translation.trim() && r.size >= 8)).toBe(true);
   expect(item.width).toBe(1200); expect(item.height).toBe(800);
-  await info.attach('live-product-poster', { body: await page.locator('#result-wrap canvas').screenshot(), contentType: 'image/png' });
+  const image = await page.evaluate(() => {
+    const source = document.querySelector('#original-wrap canvas'), result = document.querySelector('#result-wrap canvas');
+    const a = source.getContext('2d').getImageData(790, 300, 320, 280).data;
+    const b = result.getContext('2d').getImageData(790, 300, 320, 280).data;
+    return { graphicsUnchanged: a.every((v, i) => v === b[i]), png: result.toDataURL('image/png').split(',')[1] };
+  });
+  expect(image.graphicsUnchanged).toBe(true);
+  await info.attach('live-product-poster', { body: Buffer.from(image.png, 'base64'), contentType: 'image/png' });
   await info.attach('live-product-diagnostics', { body: Buffer.from(JSON.stringify(item, null, 2)), contentType: 'application/json' });
   console.log('LIVE_PRODUCT_POSTER_VERIFIED', JSON.stringify(item.regions.map(r => ({ source: r.source, translation: r.translation, size: r.size }))));
 });
@@ -52,7 +60,7 @@ test('LIVE all 14 advertised target languages return actual translations', async
     return results;
   });
   expect(results).toHaveLength(14);
-  for (const result of results) expect(result.text.trim().length).toBeGreaterThan(0);
+  for (const result of results) { expect(result.text.trim().length).toBeGreaterThan(0); expect(result.text).not.toMatch(/&#(?:x[\da-f]+|\d+);/i); }
   expect(results.find(r => r.language === 'ar').text).toMatch(/[\u0600-\u06ff]/);
   await info.attach('live-target-languages', { body: Buffer.from(JSON.stringify(results, null, 2)), contentType: 'application/json' });
   console.log('LIVE_14_LANGUAGES_VERIFIED', JSON.stringify(results));

@@ -6,7 +6,7 @@
   "engines": { "node": ">=22" },
   "scripts": {
     "check": "node scripts/check.mjs",
-    "test": "node --test tests/unit.test.mjs",
+    "test": "node --test tests/unit.test.mjs tests/translation-format.test.mjs",
     "build": "node scripts/build.mjs",
     "serve": "node scripts/serve.mjs",
     "test:browser": "playwright test tests/app.spec.mjs",
