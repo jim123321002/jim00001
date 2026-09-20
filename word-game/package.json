@@ -1,0 +1,1 @@
+{"name":"word-garden","private":true,"type":"module","scripts":{"test":"node test.mjs","check":"node test.mjs"}}
