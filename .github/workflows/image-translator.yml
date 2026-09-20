@@ -6,6 +6,8 @@ on:
     paths-ignore:
       - 'pelican-coast.html'
       - '.github/workflows/pelican-pages.yml'
+      - 'word-game/**'
+      - '.github/workflows/word-game-pages.yml'
   pull_request:
     paths-ignore:
       - 'pelican-coast.html'
