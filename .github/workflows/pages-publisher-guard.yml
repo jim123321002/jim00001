@@ -1,0 +1,32 @@
+name: Pages Publisher Isolation
+on:
+  push:
+    branches: [ci-pages-isolation]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: write
+  pages: read
+jobs:
+  isolate-legacy-publisher:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Disable only the superseded automatic branch publisher
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/pages" --jq '{build_type,source,html_url}'
+          gh api --paginate "repos/$GITHUB_REPOSITORY/actions/workflows?per_page=100" --jq '.workflows[] | {id,name,path,state}'
+          ids=$(gh api --paginate "repos/$GITHUB_REPOSITORY/actions/workflows?per_page=100" --jq '.workflows[] | select(.path == "dynamic/pages/pages-build-deployment" or .path == "pages/pages-build-deployment") | .id')
+          if [ -z "$ids" ]; then
+            echo "No automatic branch publisher is registered."
+            exit 0
+          fi
+          for id in $ids; do
+            gh api --method PUT "repos/$GITHUB_REPOSITORY/actions/workflows/$id/disable"
+            state=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/$id" --jq '.state')
+            test "$state" = disabled_manually
+            echo "ISOLATED_LEGACY_PUBLISHER $id $state"
+          done
