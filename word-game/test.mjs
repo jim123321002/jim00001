@@ -1,0 +1,1 @@
+import assert from 'node:assert/strict';import { WORDS } from './words.js';assert.equal(WORDS.length,500);assert.equal(new Set(WORDS.map(w=>w.word)).size,500);assert.ok(WORDS.every(w=>['easy','medium','hard'].includes(w.level)));assert.ok(WORDS.every(w=>w.meaning&&w.example&&w.emoji));console.log('word-game tests passed:',WORDS.length,'words');
