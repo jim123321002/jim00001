@@ -1,4 +1,4 @@
-import { WORDS } from './words.js';
+import { WORDS } from './words.js?v=20260920-2';
 const $=s=>document.querySelector(s); const LS=localStorage;
 let authMode='login', currentUser=null, queue=[], current=null, quizAnswered=false, streak=0;
 const svgFor=(w)=>`<svg viewBox="0 0 600 360" role="img" aria-label="${w.word}"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${w.colors[0]}"/><stop offset="1" stop-color="${w.colors[1]}"/></linearGradient></defs><rect width="600" height="360" fill="url(#g)"/><circle cx="510" cy="75" r="38" fill="#fff8"/><text x="300" y="185" text-anchor="middle" font-size="98">${w.emoji}</text><text x="300" y="285" text-anchor="middle" font-size="28" font-weight="700" fill="#193127">${w.hint}</text></svg>`;
