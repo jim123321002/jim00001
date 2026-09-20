@@ -1,0 +1,10 @@
+node_modules/
+_site/
+_reports/
+playwright-report/
+test-results/
+*.traineddata
+*.traineddata.gz
+.env
+.env.*
+!.env.example
