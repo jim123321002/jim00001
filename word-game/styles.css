@@ -20,3 +20,6 @@
 .type-row .input-shell input::placeholder{text-align:center;color:#a8b3ac;font-size:17px;font-weight:400}
 .type-row .primary{width:100%!important;min-height:54px;border-radius:15px;margin-top:2px;font-size:17px}
 @media(max-width:480px){.type-answer{margin-top:26px}.type-row{display:flex!important;gap:18px!important}.type-row .primary{width:100%!important}.type-row .input-shell input{padding:0 10px!important;text-align:center!important;font-size:22px!important}}
+
+.voice-btn{width:100%;min-height:52px;border:1px solid #d6e5dc;border-radius:15px;background:#f5faf7;color:#256a49;font:inherit;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:.2s;margin-top:-2px}
+.voice-btn:active{transform:translateY(1px)}.voice-btn.listening{border-color:#e36d6d;background:#fff4f4;color:#b94a4a;box-shadow:0 0 0 4px #e36d6d12}.voice-btn.listening .mic{animation:pulse 1s infinite}.voice-status{min-height:22px;margin:0;text-align:center;color:#668075;font-size:14px}.mic{font-size:19px}@keyframes pulse{50%{transform:scale(1.22)}}
