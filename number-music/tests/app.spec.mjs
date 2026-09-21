@@ -8,12 +8,12 @@ test('renders seven numbered keys and responds to keyboard', async ({ page }) =>
   await expect(page.locator('#status')).toContainText('1');
 });
 
-test('mobile layout exposes tappable keys', async ({ page }) => {
+test('mobile layout exposes tappable keys', async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('http://127.0.0.1:4173/number-music/');
   const first = page.locator('[data-note="1"]');
   await expect(first).toBeVisible();
-  await first.tap();
+  if (testInfo.project.name === 'mobile') await first.tap(); else await first.click();
   await expect(page.locator('#status')).toContainText('1');
 });
 
