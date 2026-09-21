@@ -1,0 +1,64 @@
+name: Unified CI and Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'number-music/**'
+      - 'word-game/**'
+      - 'image-translator/**'
+      - 'pelican-coast.html'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify root and static projects
+        run: |
+          test -s index.html
+          test -s pelican-coast.html
+          test -s number-music/index.html
+          test -s word-game/index.html
+          test -s image-translator/index.html
+          grep -q "数字音乐键盘" number-music/index.html
+          grep -q "score-line" number-music/index.html
+      - name: Verify word game logic
+        run: node word-game/test.mjs
+      - name: Verify number music logic and build
+        working-directory: number-music
+        run: |
+          npm install --no-audit --no-fund
+          npm run check
+          npm run build
+
+  deploy:
+    needs: verify
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - name: Deploy complete repository site
+        id: deployment
+        uses: actions/deploy-pages@v4
