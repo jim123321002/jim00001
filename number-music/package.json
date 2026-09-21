@@ -1,0 +1,12 @@
+{
+  "name":"number-music",
+  "private":true,
+  "version":"1.0.0",
+  "type":"module",
+  "scripts":{
+    "check":"node -e \"const fs=require('fs');const s=fs.readFileSync('index.html','utf8');if(!s.includes('data-note=\\\"7\\\"'))process.exit(1)\"",
+    "test":"playwright test",
+    "build":"rm -rf dist && mkdir dist && cp index.html dist/index.html"
+  },
+  "devDependencies":{"@playwright/test":"1.63.0"}
+}
