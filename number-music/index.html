@@ -9,7 +9,7 @@
 *{box-sizing:border-box}body{margin:0;min-height:100dvh;background:radial-gradient(circle at top,#1a2040 0,#0f1220 45%,#0a0d18 100%);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);display:flex;align-items:center;justify-content:center;padding:24px}
 .app{width:min(980px,100%);background:rgba(23,27,46,.86);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.08);border-radius:28px;padding:28px;box-shadow:var(--shadow)}
 .header{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:24px}.title h1{margin:0;font-size:clamp(28px,5vw,52px);letter-spacing:-.04em}.title p{margin:8px 0 0;color:var(--muted);font-size:14px}.status{font-size:13px;color:var(--muted);text-align:right}
-.score{margin:0 0 22px;padding:18px;border:1px solid rgba(255,255,255,.08);border-radius:20px;background:rgba(0,0,0,.14)}.score-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;color:var(--muted);font-size:13px}.score-head button{border:0;border-radius:10px;padding:7px 11px;background:rgba(255,255,255,.08);color:var(--text);cursor:pointer}.score-line{display:flex;gap:4px;flex-wrap:wrap;font-size:clamp(24px,4.5vw,40px);font-weight:800;line-height:1.35;letter-spacing:.03em}.score-line .digit{min-width:.7em;text-align:center;color:#707a98;transition:.15s}.score-line .digit.done{color:#48dca7}.score-line .digit.current{color:#55e9ff;text-shadow:0 0 16px rgba(85,233,255,.7);transform:scale(1.18)}.score-line .gap{width:.45em}.progress{display:flex;align-items:center;gap:10px;margin-top:14px;color:var(--muted);font-size:12px}.bar{height:5px;flex:1;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.bar i{display:block;width:0;height:100%;background:var(--accent);transition:width .15s}.keys{display:grid;grid-template-columns:repeat(7,1fr);gap:12px}
+.score{margin:0 0 22px;padding:18px;border:1px solid rgba(255,255,255,.08);border-radius:20px;background:rgba(0,0,0,.14)}.score-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;color:var(--muted);font-size:13px}.score-head button{border:0;border-radius:10px;padding:7px 11px;background:rgba(255,255,255,.08);color:var(--text);cursor:pointer}.score-line{display:flex;gap:4px;flex-wrap:wrap;font-size:clamp(24px,4.5vw,40px);font-weight:800;line-height:1.35;letter-spacing:.03em}.score-line .digit{min-width:.7em;text-align:center;color:#707a98;transition:.15s}.score-line .digit.done{color:#48dca7}.score-line .digit.current{color:#55e9ff;text-shadow:0 0 16px rgba(85,233,255,.7);transform:scale(1.18)}.score-line .gap{width:.45em}.progress{display:flex;align-items:center;gap:10px;margin-top:14px;color:var(--muted);font-size:12px}.bar{height:5px;flex:1;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.bar i{display:block;width:0;height:100%;background:var(--accent);transition:width .15s}.keyboard-wrap{display:grid;gap:8px}.range-label{font-size:12px;color:var(--muted);padding-left:4px}.range-label.high{margin-top:8px}.keys{display:grid;grid-template-columns:repeat(7,1fr);gap:12px}
 .key{position:relative;aspect-ratio:.86;border:0;border-radius:22px;background:linear-gradient(180deg,var(--key2),var(--key));box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 12px 22px rgba(0,0,0,.22);color:var(--text);touch-action:manipulation;user-select:none;-webkit-user-select:none;cursor:pointer;transition:transform .08s ease,filter .08s ease,box-shadow .08s ease}
 .key:hover{filter:brightness(1.08)}.key:active,.key.active{transform:translateY(5px) scale(.98);box-shadow:inset 0 2px 10px rgba(0,0,0,.28),0 4px 10px rgba(0,0,0,.2);filter:brightness(1.18)}
 .num{display:block;font-size:clamp(34px,6vw,70px);font-weight:800;line-height:1}.note{display:block;margin-top:10px;font-size:13px;color:#cbd0e7;letter-spacing:.08em}
@@ -36,7 +36,9 @@ select.control{cursor:pointer}
     <div class="progress"><span id="progressText">0 / 64</span><div class="bar"><i id="barFill"></i></div></div>
   </section>
 
-  <section class="keys" aria-label="数字琴键">
+  <section class="keyboard-wrap">
+  <div class="range-label">低音区</div>
+  <section class="keys" aria-label="低音区数字琴键">
     <button class="key" data-note="1" aria-label="音符1"><span class="num">1</span><span class="note">Do</span></button>
     <button class="key" data-note="2" aria-label="音符2"><span class="num">2</span><span class="note">Re</span></button>
     <button class="key" data-note="3" aria-label="音符3"><span class="num">3</span><span class="note">Mi</span></button>
@@ -45,10 +47,22 @@ select.control{cursor:pointer}
     <button class="key" data-note="6" aria-label="音符6"><span class="num">6</span><span class="note">La</span></button>
     <button class="key" data-note="7" aria-label="音符7"><span class="num">7</span><span class="note">Si</span></button>
   </section>
+  <div class="range-label high">高音区</div>
+  <section class="keys" aria-label="高音区数字琴键">
+    <button class="key" data-note="1" data-shift="1" aria-label="高音1"><span class="num">1̇</span><span class="note">Do</span></button>
+    <button class="key" data-note="2" data-shift="1" aria-label="高音2"><span class="num">2̇</span><span class="note">Re</span></button>
+    <button class="key" data-note="3" data-shift="1" aria-label="高音3"><span class="num">3̇</span><span class="note">Mi</span></button>
+    <button class="key" data-note="4" data-shift="1" aria-label="高音4"><span class="num">4̇</span><span class="note">Fa</span></button>
+    <button class="key" data-note="5" data-shift="1" aria-label="高音5"><span class="num">5̇</span><span class="note">Sol</span></button>
+    <button class="key" data-note="6" data-shift="1" aria-label="高音6"><span class="num">6̇</span><span class="note">La</span></button>
+    <button class="key" data-note="7" data-shift="1" aria-label="高音7"><span class="num">7̇</span><span class="note">Si</span></button>
+  </section>
+  </section>
 
   <div class="controls">
     <label>音色
       <select id="wave" class="control">
+        <option value="piano" selected>钢琴</option>
         <option value="sine">柔和</option>
         <option value="triangle">清亮</option>
         <option value="square">电子</option>
@@ -64,8 +78,8 @@ select.control{cursor:pointer}
   </div>
 
   <div class="help">
-    <span class="chip">电脑：键盘 1 2 3 4 5 6 7</span>
-    <span class="chip">手机：直接点按</span>
+    <span class="chip">电脑低音：1 2 3 4 5 6 7</span>
+    <span class="chip">电脑高音：Q W E R T Y U</span><span class="chip">手机：直接点按两排按键</span>
     <span class="chip">支持连续快速演奏</span>
   </div>
 </main>
@@ -113,31 +127,40 @@ function ensureAudio(){
   if(audioCtx.state==='suspended') audioCtx.resume();
   return audioCtx;
 }
-function playNote(note){
+function playNote(note,shift=0){
   const ctx=ensureAudio();
   const now=ctx.currentTime;
   const osc=ctx.createOscillator();
   const gain=ctx.createGain();
-  osc.type=waveEl.value;
-  osc.frequency.value=frequencyFor(Number(note),octaveEl.value);
+  const selected=waveEl.value;
+  osc.type=selected==='piano'?'triangle':selected;
+  osc.frequency.value=frequencyFor(Number(note),Number(octaveEl.value)+Number(shift));
   gain.gain.setValueAtTime(0.0001,now);
-  gain.gain.exponentialRampToValueAtTime(0.34,now+0.015);
-  gain.gain.exponentialRampToValueAtTime(0.0001,now+0.7);
+  gain.gain.exponentialRampToValueAtTime(selected==='piano'?0.42:0.34,now+0.008);
+  gain.gain.exponentialRampToValueAtTime(selected==='piano'?0.11:0.08,now+0.18);
+  gain.gain.exponentialRampToValueAtTime(0.0001,now+(selected==='piano'?1.15:0.7));
   osc.connect(gain).connect(ctx.destination);
-  osc.start(now); osc.stop(now+0.72);
-  const key=document.querySelector('[data-note="'+note+'"]');
+  osc.start(now); osc.stop(now+(selected==='piano'?1.18:0.72));
+  if(selected==='piano'){
+    const overtone=ctx.createOscillator(), og=ctx.createGain();
+    overtone.type='sine'; overtone.frequency.value=osc.frequency.value*2;
+    og.gain.setValueAtTime(0.08,now); og.gain.exponentialRampToValueAtTime(0.0001,now+0.45);
+    overtone.connect(og).connect(ctx.destination); overtone.start(now); overtone.stop(now+0.47);
+  }
+  const key=document.querySelector('[data-note="'+note+'"][data-shift="'+shift+'"]') || document.querySelector('[data-note="'+note+'"]:not([data-shift])');
   key?.classList.add('active');
   setTimeout(()=>key?.classList.remove('active'),120);
   statusEl.textContent='正在演奏：'+note+' · '+key?.querySelector('.note').textContent;
   advanceMelody(note);
 }
 document.querySelectorAll('.key').forEach(btn=>{
-  const trigger=e=>{e.preventDefault();playNote(btn.dataset.note)};
+  const trigger=e=>{e.preventDefault();playNote(btn.dataset.note,btn.dataset.shift||0)};
   btn.addEventListener('pointerdown',trigger);
 });
 window.addEventListener('keydown',e=>{
   if(e.repeat) return;
-  if(/^[1-7]$/.test(e.key)){ e.preventDefault(); playNote(e.key); }
+  if(/^[1-7]$/.test(e.key)){ e.preventDefault(); playNote(e.key,0); }
+  if(['q','w','e','r','t','y','u'].includes(e.key.toLowerCase())){e.preventDefault();playNote(String(['q','w','e','r','t','y','u'].indexOf(e.key.toLowerCase())+1),1);}
 });
 window.__numberMusic={playNote,frequencyFor};
 </script>
