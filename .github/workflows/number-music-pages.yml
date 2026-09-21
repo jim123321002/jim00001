@@ -46,18 +46,10 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}number-music/
     steps:
       - uses: actions/checkout@v4
-      - name: Prepare Pages content
-        run: |
-          mkdir -p _site/number-music
-          cp number-music/index.html _site/number-music/index.html
-          cp index.html _site/index.html
-          [ -d word-game ] && cp -r word-game _site/word-game || true
-          [ -d image-translator ] && cp -r image-translator _site/image-translator || true
-          [ -f pelican-coast.html ] && cp pelican-coast.html _site/pelican-coast.html || true
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: .
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
