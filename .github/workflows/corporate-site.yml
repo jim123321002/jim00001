@@ -1,0 +1,35 @@
+name: Corporate Website CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'corporate-site/**'
+      - '.github/workflows/corporate-site.yml'
+  pull_request:
+    paths:
+      - 'corporate-site/**'
+      - '.github/workflows/corporate-site.yml'
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate files
+        run: |
+          test -s corporate-site/index.html
+          grep -q "安邦致远" corporate-site/index.html
+          grep -q 'id="solutions"' corporate-site/index.html
+          grep -q "prefers-reduced-motion" corporate-site/index.html
+      - name: Run core tests
+        run: node --test corporate-site/test.mjs
+      - name: Upload website artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: corporate-site
+          path: corporate-site/
