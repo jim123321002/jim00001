@@ -8,6 +8,7 @@ on:
       - 'number-music/**'
       - 'word-game/**'
       - 'image-translator/**'
+      - 'corporate-site/**'
       - 'pelican-coast.html'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
@@ -36,6 +37,8 @@ jobs:
           test -s number-music/index.html
           test -s word-game/index.html
           test -s image-translator/index.html
+          test -s corporate-site/index.html
+          grep -q "安邦致远" corporate-site/index.html
           grep -q "数字音乐键盘" number-music/index.html
           grep -q "score-line" number-music/index.html
       - name: Verify word game logic
